@@ -1,10 +1,12 @@
+const { request } = require("express");
 const Tour = require("../models/TourModel");
 
 
 
 module.exports.postTour = async (req, res, next) => {
 
-    const tour = new Tour({ name: req.body.name })
+    const tour = new Tour(req.body)
+    console.log(tour)
     try {
         const newTour = await tour.save();
         console.log("AA");
@@ -28,10 +30,36 @@ module.exports.postTour = async (req, res, next) => {
 
 
 
-// module.exports.getAllUser = (req, res, next) => {
-//     const { limit } = req.query;
-//     res.send(userdata.slice(0, limit))
-// }
+module.exports.getTour = async (req, res, next) => {
+    const { id } = req.params;
+
+    const tour = await Tour.find({ _id: id });
+    console.log(tour[0].count)
+    const { name, price, description } = tour[0];
+    const result = await Tour.updateOne({ _id: id }, { $set: { count: tour[0].count + 1 } })
+    res.status(200).json({
+        status: "success",
+        data: { name, price, description },
+
+    })
+}
+module.exports.getAllTour = async (req, res, next) => {
+
+
+    const tours = await Tour.find({});
+    console.log(tours)
+    // const { name, price, description } = tour[0];
+    const result = []
+    const uuu = tours.map(tour => {
+        result.push({ name: tour.name, description: tour.description, price: tour.price })
+
+    })
+    res.status(200).json({
+        status: "success",
+        data: result,
+
+    })
+}
 
 
 // module.exports.postUser = (req, res, next) => {
