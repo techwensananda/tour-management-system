@@ -1,23 +1,25 @@
-const TourSchema = require("../models/tourModel");
+const Tour = require("../models/TourModel");
+
 
 
 module.exports.postTour = async (req, res, next) => {
 
-
+    const tour = new Tour({ name: req.body.name })
     try {
-        const newTour = req.body;
-
-        const tour = new TourSchema({ newTour })
+        const newTour = await tour.save();
+        console.log("AA");
+        // console.log(tour, newTour);
         res.status(200).json({
             status: "success",
-            data: tour,
+            data: newTour,
             message: "Suucessfully upload tour ",
         })
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             status: "fails",
-            message: res.message,
+            message: error,
         })
     }
 

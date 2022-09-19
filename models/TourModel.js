@@ -12,22 +12,19 @@ const tourSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+        // required: true,
     },
     price: {
         type: Number,
-        required: true,
+        // required: true,
         min: [0, "price cannot be nagative"]
     },
-    image: {
-        type: Array,
 
-    },
     count: {
         type: Number,
         default: 0,
     }
 }, { timestamps: true });
 
-const TourSchema = mongoose.model("tour", tourSchema);
-module.exports = TourSchema;
+const Tour = mongoose.model("Tour", tourSchema);
+module.exports = Tour;
