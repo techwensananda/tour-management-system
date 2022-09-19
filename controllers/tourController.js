@@ -60,6 +60,23 @@ module.exports.getAllTour = async (req, res, next) => {
 
     })
 }
+module.exports.getTrendingTours = async (req, res, next) => {
+
+
+    const tours = await Tour.find({}).sort({ count: -1 });
+    console.log(tours)
+    // const { name, price, description } = tour[0];
+    const result = []
+    const uuu = tours.map(tour => {
+        result.push({ name: tour.name, description: tour.description, price: tour.price })
+
+    })
+    res.status(200).json({
+        status: "success",
+        data: result,
+
+    })
+}
 
 
 // module.exports.postUser = (req, res, next) => {
