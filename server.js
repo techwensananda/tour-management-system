@@ -4,6 +4,7 @@ var cors = require('cors')
 const app = express()
 app.use(cors())
 const tourRoute = require("./routes/tour.routes")
+// app.use(express.json())
 app.use(express.json())
 
 
