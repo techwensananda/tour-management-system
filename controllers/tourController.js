@@ -64,6 +64,20 @@ module.exports.getAllTour = async (req, res, next) => {
     // const tours = await Tour.find({});
     // console.log(tours)
 
+    const excludeFields = ["sort", "page", "limit"];
+
+    excludeFields.forEach(field => delete filters[field])
+
+
+
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(",").join(" ");
+      
+        queries.sortBy = sortBy;
+    
+
+    }
+
     if (req.query.page) {
         const { page = 0, limit = 10 } = req.query;
         const skip = (page - 1) * parseInt(limit);
@@ -108,7 +122,7 @@ module.exports.getCheapestTours = async (req, res, next) => {
 
 
     const tours = await Tour.find({})
-        .sort({ count: -1 });
+        .sort({ price: -1 });
     console.log(tours)
     // const { name, price, description } = tour[0];
     const result = []
@@ -135,53 +149,3 @@ module.exports.updateTour = async (req, res, next) => {
     })
 
 }
-
-
-// module.exports.deleteUser = (req, res, next) => {
-//     const { id } = req.params;
-
-//     const updateData = userdata.filter(item => item._id != id);
-
-//     userdata = updateData;
-//     res.send(updateData)
-
-// }
-// module.exports.updateBulkUsers = (req, res, next) => {
-
-//     const { usersUpdateData } = req.body;
-
-//     const findError = usersUpdateData.find(user => (user.name == "" || user.gender == "" || user.photoUrl == "" || user.contact == "" || user.address == ""))
-
-//     if (findError != []) {
-//         console.log("first")
-//         res.json("Please fill all data !")
-//     }
-
-//     else {
-//         const ids = usersUpdateData.map(user => user._id);
-
-//         const ppp = ids.map((id, i) => {
-
-//             const usersingle = userdata.find((u, i) => u._id == id);
-//             usersingle.name = usersUpdateData[i].name;
-
-//             usersingle.gender = usersUpdateData[i].gender;
-//             usersingle.contact = usersUpdateData[i].contact;
-//             usersingle.address = usersUpdateData[i].address;
-//             usersingle.photoUrl = usersUpdateData[i].photoUrl;
-
-//         })
-
-
-
-
-//         res.send(usersUpdateData)
-//     }
-
-
-
-
-
-
-
-// }
