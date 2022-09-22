@@ -77,11 +77,12 @@ module.exports.getAllTour = async (req, res, next) => {
 
     }
 
-    if (req.query.page) {
+    if (req.query) {
         const { page = 1, limit = 10 } = req.query;
-        const skip = (page - 1) * parseInt(limit);
+        const skip = (page - 1) * Number(limit);
         queries.skip = skip;
-        queries.limit = parseInt(limit);
+        queries.limit = Number(limit);
+
 
     }
 
@@ -94,7 +95,7 @@ module.exports.getAllTour = async (req, res, next) => {
     }
     const tours = await getToursService(filters, queries)
     console.log(req.query)
-    console.log(tours)
+    // console.log(tours)
 
     res.status(200).json({
         status: "success",
