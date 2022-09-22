@@ -1,17 +1,17 @@
 const { request } = require("express");
 const Tour = require("../models/TourModel");
-const { getProductsService } = require("../service/productService");
+const { getToursService } = require("../service/productService");
 
 
 
 module.exports.postTour = async (req, res, next) => {
 
     const tour = new Tour(req.body)
-    console.log(tour)
+
     try {
         const newTour = await tour.save();
-        console.log("AA");
-        // console.log(tour, newTour);
+
+
         res.status(200).json({
             status: "success",
             data: newTour,
@@ -61,8 +61,7 @@ module.exports.deleteTour = async (req, res, next) => {
 module.exports.getAllTour = async (req, res, next) => {
     const filters = { ...req.query }
     const queries = {}
-    // const tours = await Tour.find({});
-    // console.log(tours)
+
 
     const excludeFields = ["sort", "page", "limit"];
 
@@ -79,21 +78,24 @@ module.exports.getAllTour = async (req, res, next) => {
     }
 
     if (req.query.page) {
-        const { page = 0, limit = 10 } = req.query;
+        const { page = 1, limit = 10 } = req.query;
         const skip = (page - 1) * parseInt(limit);
         queries.skip = skip;
         queries.limit = parseInt(limit);
 
     }
-    const tours = await getProductsService(filters, queries)
-    console.log(req.query)
-    console.log(tours?.length)
-    // const { name, price, description } = tour[0];
-    const result = []
-    // const uuu = tours.map(tour => {
-    //     result.push({ name: tour.name, description: tour.description, price: tour.price })
 
-    // })
+    if (req.query.fields) {
+        const fields = req.query.fields.split(",").join(" ");
+
+        queries.fields = fields;
+
+
+    }
+    const tours = await getToursService(filters, queries)
+    console.log(req.query)
+    console.log(tours)
+
     res.status(200).json({
         status: "success",
         data: tours,
@@ -104,8 +106,7 @@ module.exports.getTrendingTours = async (req, res, next) => {
 
 
     const tours = await Tour.find({}).sort({ count: -1 });
-    console.log(tours)
-    // const { name, price, description } = tour[0];
+
     const result = []
     const uuu = tours.slice(0, 3).map(tour => {
         result.push({ name: tour.name, description: tour.description, price: tour.price })
@@ -123,8 +124,7 @@ module.exports.getCheapestTours = async (req, res, next) => {
 
     const tours = await Tour.find({})
         .sort({ price: 1 });
-    console.log(tours)
-    // const { name, price, description } = tour[0];
+
     const result = []
     const uuu = tours.slice(0, 3).map(tour => {
         result.push({ name: tour.name, description: tour.description, price: tour.price })
@@ -140,7 +140,7 @@ module.exports.getCheapestTours = async (req, res, next) => {
 module.exports.updateTour = async (req, res, next) => {
     const { id } = req.params;
     const tour = await Tour.updateOne({ _id: id }, { $set: req.body })
-    // const { name, price, description } = tour[0];
+
 
     res.status(200).json({
         status: "success",
