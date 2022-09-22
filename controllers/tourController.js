@@ -1,5 +1,6 @@
 const { request } = require("express");
 const Tour = require("../models/TourModel");
+const { getProductsService } = require("../service/productService");
 
 
 
@@ -43,20 +44,45 @@ module.exports.getTour = async (req, res, next) => {
 
     })
 }
-module.exports.getAllTour = async (req, res, next) => {
+
+module.exports.deleteTour = async (req, res, next) => {
+    const { id } = req.params;
+
+    await Tour.deleteOne({ _id: id });
 
 
-    const tours = await Tour.find({});
-    console.log(tours)
-    // const { name, price, description } = tour[0];
-    const result = []
-    const uuu = tours.map(tour => {
-        result.push({ name: tour.name, description: tour.description, price: tour.price })
-
-    })
     res.status(200).json({
         status: "success",
-        data: result,
+        "message": "Delete Successfully",
+
+    })
+}
+
+module.exports.getAllTour = async (req, res, next) => {
+    const filters = { ...req.query }
+    const queries = {}
+    // const tours = await Tour.find({});
+    // console.log(tours)
+
+    if (req.query.page) {
+        const { page = 0, limit = 10 } = req.query;
+        const skip = (page - 1) * parseInt(limit);
+        queries.skip = skip;
+        queries.limit = parseInt(limit);
+
+    }
+    const tours = await getProductsService(filters, queries)
+    console.log(req.query)
+    console.log(tours?.length)
+    // const { name, price, description } = tour[0];
+    const result = []
+    // const uuu = tours.map(tour => {
+    //     result.push({ name: tour.name, description: tour.description, price: tour.price })
+
+    // })
+    res.status(200).json({
+        status: "success",
+        data: tours,
 
     })
 }
@@ -67,7 +93,7 @@ module.exports.getTrendingTours = async (req, res, next) => {
     console.log(tours)
     // const { name, price, description } = tour[0];
     const result = []
-    const uuu = tours.map(tour => {
+    const uuu = tours.slice(0, 3).map(tour => {
         result.push({ name: tour.name, description: tour.description, price: tour.price })
 
     })
@@ -78,45 +104,37 @@ module.exports.getTrendingTours = async (req, res, next) => {
     })
 }
 
-
-// module.exports.postUser = (req, res, next) => {
-//     const newUser = req.body;
-//     const { name, gender, contact, address, photoUrl } = newUser;
+module.exports.getCheapestTours = async (req, res, next) => {
 
 
+    const tours = await Tour.find({})
+        .sort({ count: -1 });
+    console.log(tours)
+    // const { name, price, description } = tour[0];
+    const result = []
+    const uuu = tours.slice(0, 3).map(tour => {
+        result.push({ name: tour.name, description: tour.description, price: tour.price })
 
-//     if (name == "" || gender == "" || contact == "" || address == "" || photoUrl == "") {
-//         console.log("first")
-//         res.json("Please fill all data !")
-//     }
-//     else {
-//         const _id = userdata.length + 1;
+    })
+    res.status(200).json({
+        status: "success",
+        data: result,
 
-//         userdata.push({ _id, ...newUser })
-//         res.json({ _id, ...newUser })
-//     }
+    })
+}
 
-// }
-// module.exports.updateUser = (req, res, next) => {
-//     const { id } = req.params;
-//     console.log(id)
-//     const user = userdata.find(item => item._id == id);
+module.exports.updateTour = async (req, res, next) => {
+    const { id } = req.params;
+    const tour = await Tour.updateOne({ _id: id }, { $set: req.body })
+    // const { name, price, description } = tour[0];
 
-//     if (!user) {
-//         res.json("Please enter valid id")
-//     }
-//     const updatedata = req.body;
+    res.status(200).json({
+        status: "success",
+        data: tour
 
-//     user.name = updatedata.name;
-//     user.gender = updatedata.gender;
-//     user.contact = updatedata.contact;
-//     user.address = updatedata.address;
-//     user.photoUrl = updatedata.photoUrl;
+    })
 
-//     res.send(user)
-
-
-// }
+}
 
 
 // module.exports.deleteUser = (req, res, next) => {
