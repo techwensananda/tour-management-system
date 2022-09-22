@@ -72,9 +72,9 @@ module.exports.getAllTour = async (req, res, next) => {
 
     if (req.query.sort) {
         const sortBy = req.query.sort.split(",").join(" ");
-      
+
         queries.sortBy = sortBy;
-    
+
 
     }
 
@@ -122,7 +122,7 @@ module.exports.getCheapestTours = async (req, res, next) => {
 
 
     const tours = await Tour.find({})
-        .sort({ price: -1 });
+        .sort({ price: 1 });
     console.log(tours)
     // const { name, price, description } = tour[0];
     const result = []
